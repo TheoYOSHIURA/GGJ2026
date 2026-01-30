@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+/*
 public class NoteChecker : MonoBehaviour
 {
 
@@ -71,3 +71,4 @@ public class NoteChecker : MonoBehaviour
     }
 
 }
+*/
