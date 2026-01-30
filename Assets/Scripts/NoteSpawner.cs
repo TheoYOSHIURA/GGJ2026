@@ -5,6 +5,7 @@ public class NoteSpawner : MonoBehaviour
 {
     [SerializeField] private NoteController[] _noteControllers;
     [SerializeField] private float _bpm;
+    [SerializeField] private int _notesPerBeat = 1;
     [SerializeField] private float _timeElapsed = 0;
     [SerializeField] private Transform _spawnPosition;
     [SerializeField] private Transform _noteContainer;
@@ -21,9 +22,9 @@ public class NoteSpawner : MonoBehaviour
     void Update()
     {
         _timeElapsed += Time.deltaTime;
-        if (_timeElapsed >= 60 / _bpm) // Pas sûr que ce soit ça lol
+        if (_timeElapsed >= 60 / _notesPerBeat / _bpm) // Pas sûr que ce soit ça lol
         {
-            _timeElapsed -= 60 / _bpm;
+            _timeElapsed -= 60 / _notesPerBeat / _bpm;
             SpawnNote();
         }
     }
