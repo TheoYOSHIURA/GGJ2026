@@ -65,7 +65,7 @@ public class NoteChecker : MonoBehaviour
             }
             else
             {
-                ScoreManager.Instance.Score += Mathf.RoundToInt(10);
+                ScoreManager.Instance.Score -= 10;
             }
             GameObject note = _notes[0].gameObject;
             _notes.RemoveAt(0);

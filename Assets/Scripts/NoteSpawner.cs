@@ -6,10 +6,11 @@ public class NoteSpawner : MonoBehaviour
     [SerializeField] private NoteController[] _noteControllers;
     [SerializeField] private float _bpm;
     [SerializeField] private int _notesPerBeat = 1;
-    [SerializeField] private float _timeElapsed = 0;
     [SerializeField] private Transform _spawnPosition;
     [SerializeField] private Transform _noteContainer;
     [SerializeField] private Transform _noteChecker;
+    
+    private float _timeElapsed = 0;
 
     public float Bpm { get => _bpm; set => _bpm = value; }
 
