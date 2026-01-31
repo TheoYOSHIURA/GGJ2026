@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] GameObject ControlMenu;
     public void PlayGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
@@ -15,5 +16,13 @@ public class MainMenu : MonoBehaviour
 #else
     Application.Quit();
 #endif
+    }
+    public void ControlsButton()
+    {
+        ControlMenu.SetActive(true);
+    }
+    public void MainMenuButton()
+    {
+        ControlMenu.SetActive(false);
     }
 }
