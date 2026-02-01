@@ -1,11 +1,9 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using System.Globalization;
 
 public class CameraShake : MonoBehaviour
 {
-    public static CameraShake Instance { get; private set; }
     private float shakeDuration = 0.3f;
     private float shakeMagnitude = 0.2f;
     private Vector3 initialPosition; 
@@ -13,12 +11,6 @@ public class CameraShake : MonoBehaviour
     void Awake()
     {
         initialPosition = transform.localPosition;
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else Destroy(gameObject);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,7 +32,7 @@ public class CameraShake : MonoBehaviour
 
     private IEnumerator Shake()
     {
-        float shakeTime = 0.2f;
+        float shakeTime = 0.0f;
 
         while (shakeTime < shakeDuration)
         {
