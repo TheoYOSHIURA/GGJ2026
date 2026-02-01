@@ -1,8 +1,10 @@
 using System;
 using NUnit.Framework;
+using Unity.VectorGraphics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public enum EHitQuality
 {
@@ -18,10 +20,17 @@ public class NoteChecker : MonoBehaviour
 
     [SerializeField] private NoteSpawner _noteSpawner;
 
+    [Header("Hit Settings")]
+    [SerializeField] private float hitWindowPerfect = 0.05f; // 50 ms
+    [SerializeField] private float hitWindowGood = 0.1f;     // 100 ms
+
+    private int _misses = 0;
+
     private static NoteChecker _instance;
     public static NoteChecker Instance => _instance;
 
-    public float HitWindowGood { get => hitWindowGood; set => hitWindowGood = value; }
+    public float HitWindowGood { get => HitWindowGood1; set => HitWindowGood1 = value; }
+    public float HitWindowGood1 { get => hitWindowGood; set => hitWindowGood = value; }
 
     #region Events
     private event Action _onPerfect;
@@ -74,9 +83,7 @@ public class NoteChecker : MonoBehaviour
     }
     #endregion Events
 
-    [Header("Hit Settings")]
-    [SerializeField] private float hitWindowPerfect = 0.05f; // 50 ms
-    [SerializeField] private float hitWindowGood = 0.1f;     // 100 ms
+    
 
     void Awake()
     {
@@ -167,15 +174,22 @@ public class NoteChecker : MonoBehaviour
         switch (quality)
         {
             case EHitQuality.Perfect:
+                _misses = 0;
                 ScoreManager.Instance.Score += 300;
                 _onPerfect?.Invoke();
                 break;
             case EHitQuality.Good:
+                if (_misses > 0) _misses--;
                 ScoreManager.Instance.Score += 100;
                 _onGood?.Invoke();
                 break;
             case EHitQuality.Miss:
                 ScoreManager.Instance.Score -= 50;
+                _misses++;
+                if (_misses >= 5)
+                {
+                    SceneManager.LoadScene("GameOver");
+                }
                 _onMiss?.Invoke();
                 break;
         }

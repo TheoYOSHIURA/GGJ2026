@@ -40,7 +40,7 @@ public static CameraShake Instance { get; private set; }
 
     private IEnumerator Shake()
     {
-        float shakeTime = 0.0f;
+        float shakeTime = 0.2f;
 
         while (shakeTime < shakeDuration)
         {

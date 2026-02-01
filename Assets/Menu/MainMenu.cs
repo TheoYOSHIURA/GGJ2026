@@ -7,6 +7,7 @@ public class MainMenu : MonoBehaviour
 
 {
     [SerializeField] GameObject ControlMenu;
+    [SerializeField] GameObject _mainMenu;
 
     public void PlayGame()
     {
@@ -23,9 +24,16 @@ public class MainMenu : MonoBehaviour
     public void ControlsButton()
     {
         ControlMenu.SetActive(true);
+        _mainMenu.SetActive(false);
     }
     public void MainMenuButton()
     {
         ControlMenu.SetActive(false);
+        _mainMenu.SetActive(true);
+    }
+
+    public void ResetGame()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }
