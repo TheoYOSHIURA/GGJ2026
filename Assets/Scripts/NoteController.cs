@@ -32,5 +32,11 @@ public class NoteController : MonoBehaviour
         double spawnTime = _hitTime - _travelTime;
         double t = (AudioManager.Instance.SongTime - spawnTime) / _travelTime;
         transform.position = Vector3.Lerp(_spawnPos, _hitPos, Mathf.Clamp01((float)t));
+
+        if (AudioManager.Instance.SongTime >= _hitTime + NoteChecker.Instance.HitWindowGood)
+        {
+            NoteSpawner.Instance.Notes.Remove(this);
+            Destroy(gameObject);
+        }
     }
 }
