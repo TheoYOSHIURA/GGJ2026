@@ -46,19 +46,19 @@ public class NoteChecker : MonoBehaviour
                 switch (_keys[i])
                 {
                     case KeyCode.D:
-                        SoundsManager.Instance.PlaySound("clic");
+                        SoundsManager.Instance.PlaySound("clic", 0.7f);
                         HitNote("joie");
                         break;
                     case KeyCode.F:
-                        SoundsManager.Instance.PlaySound("clic");
+                        SoundsManager.Instance.PlaySound("clic", 0.7f);
                         HitNote("tristesse");
                         break;
                     case KeyCode.J:
-                        SoundsManager.Instance.PlaySound("clic");
+                        SoundsManager.Instance.PlaySound("clic", 0.7f);
                         HitNote("colere");
                         break;
                     case KeyCode.K:
-                        SoundsManager.Instance.PlaySound("clic");
+                        SoundsManager.Instance.PlaySound("clic", 0.7f);
                         HitNote("surprise");
                         break;
                 }
@@ -86,7 +86,8 @@ public class NoteChecker : MonoBehaviour
         }
         if (closestNote == null)
         {
-            SoundsManager.Instance.PlaySound("wrong");
+            SoundsManager.Instance.PlaySound("wrong", 0.7f);
+            CameraShake.Instance.ShakeCamera();
             return EHitQuality.Miss;           
         }
 
@@ -94,7 +95,8 @@ public class NoteChecker : MonoBehaviour
         if (closestNote.CompareTag(tag) == false)
         {
             Destroy(closestNote.gameObject);
-            SoundsManager.Instance.PlaySound("wrong");
+            SoundsManager.Instance.PlaySound("wrong", 0.7f);
+            CameraShake.Instance.ShakeCamera();
             return EHitQuality.Miss;
             
         } //*/
@@ -119,7 +121,8 @@ public class NoteChecker : MonoBehaviour
         else
         {
             Destroy(closestNote.gameObject);
-            SoundsManager.Instance.PlaySound("wrong");
+            SoundsManager.Instance.PlaySound("wrong", 0.7f);
+            CameraShake.Instance.ShakeCamera();
             return EHitQuality.Miss;
         }
     }

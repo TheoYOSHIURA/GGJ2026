@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class SoundsManager : MonoBehaviour
 {
     public static SoundsManager Instance { get; private set; }
+    
     public Dictionary<string, AudioClip> SoundDict { get => _soundDict; set => _soundDict = value; }
 
     [SerializeField] private AudioClip[] _sounds;
@@ -29,12 +30,19 @@ public class SoundsManager : MonoBehaviour
         }
     }
 
-    public void PlaySound(string soundName)
+    
+    public void PlaySound(string soundName, float volume )
     {
         if (SoundDict.TryGetValue(soundName, out var clip))
         {
-            _audioSource.PlayOneShot(clip);
+            _audioSource.PlayOneShot(clip, volume);
         }
-        
     }
+            
+
+        
+        
+    
+     
+     
 }
