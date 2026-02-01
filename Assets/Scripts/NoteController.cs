@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class NoteController : MonoBehaviour
 {
@@ -22,16 +21,16 @@ public class NoteController : MonoBehaviour
 
     void Update()
     {
-        double spawnTime = _hitTime - _travelTime - AudioManager.Instance.VisualInputDelay;
+        /* Note is not moving fast enough
+        double t = (AudioManager.Instance.SongTime - _hitTime) / AudioManager.Instance.SecondsPerBeat;
+        transform.position = Vector3.Lerp(
+            _spawnPos,
+            _hitPos,
+            (float)t
+        );//*/
+
+        double spawnTime = _hitTime - _travelTime;
         double t = (AudioManager.Instance.SongTime - spawnTime) / _travelTime;
         transform.position = Vector3.Lerp(_spawnPos, _hitPos, Mathf.Clamp01((float)t));
-
-        if (AudioManager.Instance.SongTime >= _hitTime + NoteChecker.Instance.HitWindowGood)
-        {
-            // Missed note
-            ScoreManager.Instance.Score -= 50;
-            NoteSpawner.Instance.Notes.Remove(this);
-            Destroy(gameObject);
-        }
     }
 }
