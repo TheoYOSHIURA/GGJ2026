@@ -1,77 +1,117 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
+using System;
+using NUnit.Framework;
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+
+public enum EHitQuality
+{
+    Miss,
+    Good,
+    Perfect
+}
 
 public class NoteChecker : MonoBehaviour
 {
+    [Header("Key Bindings")]
+    [SerializeField] private KeyCode[] _keys = { KeyCode.D, KeyCode.F, KeyCode.J, KeyCode.K };
 
-    private KeyCode[] _keys = { KeyCode.D, KeyCode.F, KeyCode.J, KeyCode.K };
-    private List<Collider2D> _notes = new List<Collider2D>();
+    [SerializeField] private NoteSpawner _noteSpawner;
 
-    void Start()
+    private static NoteChecker _instance;
+    public static NoteChecker Instance => _instance;
+
+    private event Action _onNoteHit;
+    public event Action OnNoteHit
     {
+        add { _onNoteHit -= value; _onNoteHit += value; }
+        remove { _onNoteHit -= value; }
+    }
 
+    [Header("Hit Settings")]
+    [SerializeField] private float hitWindowPerfect = 0.05f; // 50 ms
+    [SerializeField] private float hitWindowGood = 0.1f;     // 100 ms
+
+    void Awake()
+    {
+        if (_instance == null) _instance = this;
+        else Destroy(gameObject);
     }
 
     void Update()
     {
-        GetKey();
-    }
-    private void GetKey()
-    {
-        if (Input.GetKeyDown(_keys[0]))
+        for (int i = 0; i < _keys.Length; i++)
         {
-            BurnNote("joie");
-        }
-
-        if (Input.GetKeyDown(_keys[1]))
-        {
-            BurnNote("tristesse");
-        }
-
-        if (Input.GetKeyDown(_keys[2]))
-        {
-            BurnNote("colere");
-        }
-
-        if (Input.GetKeyDown(_keys[3]))
-        {
-            BurnNote("surprise");
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        _notes.Add(collision);
-        //Debug.Log("Added a note");
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        _notes.Remove(collision);
-        //Debug.Log("Remove a note");
-    }
-
-    private void BurnNote(string tag)
-    {
-        if (_notes.Count > 0)
-        {
-            if (_notes[0].CompareTag(tag))
+            if (Input.GetKeyDown(_keys[i]))
             {
-                float distance = Mathf.Abs(_notes[0].transform.position.x - transform.position.x);
-                ScoreManager.Instance.Score += Mathf.RoundToInt(100 - distance);
+                _onNoteHit?.Invoke();
+                switch (_keys[i])
+                {
+                    case KeyCode.D:
+                        HitNote("joie");
+                        break;
+                    case KeyCode.F:
+                        HitNote("tristesse");
+                        break;
+                    case KeyCode.J:
+                        HitNote("colere");
+                        break;
+                    case KeyCode.K:
+                        HitNote("surprise");
+                        break;
+                }
             }
-            else
+        }
+    }
+
+    private EHitQuality HitNote(string tag)
+    {
+        // Find the closest note to hit
+        if (_noteSpawner.Notes == null) return EHitQuality.Miss;
+        NoteController closestNote = null;
+        double smallestOffset = double.MaxValue;
+
+        foreach (var note in _noteSpawner.Notes)
+        {
+            double offset = AudioManager.Instance.SongTime - note.HitTime;
+            double absOffset = Math.Abs(offset);
+
+            if (absOffset < smallestOffset)
             {
-                ScoreManager.Instance.Score -= 10;
+                smallestOffset = absOffset;
+                closestNote = note;
             }
-            GameObject note = _notes[0].gameObject;
-            _notes.RemoveAt(0);
-            Destroy(note);
+        }
+        if (closestNote == null)
+        {
+            return EHitQuality.Miss;
         }
 
-        Debug.Log(ScoreManager.Instance.Score);
+        /* Check if the note has the correct tag
+        if (closestNote.CompareTag(tag) == false)
+        {
+            Destroy(closestNote.gameObject);
+            return EHitQuality.Miss;
+        } //*/
+
+        // Calculate the offset between the note's hit time and the current song time
+        double TimingOffset = Mathf.Abs((float)(closestNote.HitTime - AudioManager.Instance.SongTime));
+        Debug.Log($"Hit Time :  {closestNote.HitTime:F3} | Song Time: {AudioManager.Instance.SongTime:F3} | Hit offset: {TimingOffset:F3}");
+
+        if (TimingOffset <= hitWindowPerfect)
+        {
+            Debug.Log("Perfect!");
+            Destroy(closestNote.gameObject);
+            return EHitQuality.Perfect;
+        }
+        else if (TimingOffset <= hitWindowGood)
+        {
+            Debug.Log("Good");
+            Destroy(closestNote.gameObject);
+            return EHitQuality.Good;
+        }
+        else
+        {
+            Destroy(closestNote.gameObject);
+            return EHitQuality.Miss;
+        }
     }
 }

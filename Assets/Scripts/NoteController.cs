@@ -2,28 +2,35 @@ using UnityEngine;
 
 public class NoteController : MonoBehaviour
 {
-    [SerializeField] private float _spawnDistance = 1;
-    [SerializeField] private float _speed = 1;
-    [SerializeField] private NoteSpawner _noteSpawner;
-    [SerializeField] private Transform _noteChecker;
-    //[SerializeField] private NoteChecker _noteChecker;
+    private Vector3 _spawnPos;
+    private Vector3 _hitPos;
+    private double _hitTime;
+    private int _beatIndex;
+    private double _travelTime;
 
-    public NoteSpawner NoteSpawner { get => _noteSpawner; set => _noteSpawner = value; }
-    public Transform NoteChecker { get => _noteChecker; set => _noteChecker = value; }
+    public int BeatIndex { get => _beatIndex; set => _beatIndex = value; }
+    public double HitTime { get => _hitTime; set => _hitTime = value; }
 
     void Start()
     {
-        _spawnDistance = NoteChecker.position.x - transform.position.x;
-        _speed = _spawnDistance * NoteSpawner.Bpm / 3600;
+        _hitTime = _beatIndex * AudioManager.Instance.SecondsPerBeat;
+        _spawnPos = transform.position;
+        _hitPos = NoteSpawner.Instance.HitPosition.position;
+        _travelTime = NoteSpawner.Instance.BeatsAhead * AudioManager.Instance.SecondsPerBeat;
     }
 
     void Update()
     {
-            
-    }
+        /* Note is not moving fast enough
+        double t = (AudioManager.Instance.SongTime - _hitTime) / AudioManager.Instance.SecondsPerBeat;
+        transform.position = Vector3.Lerp(
+            _spawnPos,
+            _hitPos,
+            (float)t
+        );//*/
 
-    private void FixedUpdate()
-    {
-        transform.position = new Vector3(transform.position.x + _speed, transform.position.y, transform.position.z);
+        double spawnTime = _hitTime - _travelTime;
+        double t = (AudioManager.Instance.SongTime - spawnTime) / _travelTime;
+        transform.position = Vector3.Lerp(_spawnPos, _hitPos, Mathf.Clamp01((float)t));
     }
 }

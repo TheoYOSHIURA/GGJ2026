@@ -1,34 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
-public class CharaBounce : MonoBehaviour
+public class CheckerBounce : MonoBehaviour
 {
     
     public AnimationCurve bounceCurve;
     public float bounceDuration = 0.5f;
-    private Vector3 initialScale;
-
+    private Vector3 initialScale;   
     void Awake()
     {
         
-    }
-
-    void Start()
-    {
-        AudioManager.Instance.OnBeat += TriggerBounce;
-
-        initialScale = transform.localScale;
-    }
-
-    void Update()
-    {
-         
-  
-    }
-
-    private void OnDestroy()
-    {
-        AudioManager.Instance.OnBeat -= TriggerBounce;
     }
 
     private IEnumerator Bounce()
@@ -48,11 +29,28 @@ public class CharaBounce : MonoBehaviour
     
     }
 
-    public void TriggerBounce(int beatIndex)
+    public void TriggerBounce()
     {
         StopAllCoroutines();
+
         StartCoroutine(Bounce());
+
     }
 
-    
+    void Start()
+    {
+        initialScale = transform.localScale;
+        //NoteChecker.Instance.OnNoteHit += TriggerBounce;
+    }
+
+    void Update()
+    {
+         
+  
+    }
+
+    private void OnDestroy()
+    {
+        //NoteChecker.Instance.OnNoteHit -= TriggerBounce;
+    }
 }

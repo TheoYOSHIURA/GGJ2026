@@ -1,1 +1,2 @@
-Assets/Scenes/SampleScene.unity
+Assets/Scenes/PersistentScene.unity
+Assets/Scenes/GameScene.unity
