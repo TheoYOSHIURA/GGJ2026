@@ -14,7 +14,8 @@ public class MenuPause : MonoBehaviour
             playableDirector.Play();
             container.SetActive(true);
             Time.timeScale = 0;
-       }
+            
+        }
     }
     
         public void MainMenu()
