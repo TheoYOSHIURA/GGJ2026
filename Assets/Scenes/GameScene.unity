@@ -688,6 +688,7 @@ GameObject:
   m_Component:
   - component: {fileID: 450851130}
   - component: {fileID: 450851131}
+  - component: {fileID: 450851132}
   m_Layer: 5
   m_Name: PauseMenu
   m_TagString: Untagged
@@ -730,6 +731,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MenuPause
   playableDirector: {fileID: 224150420}
   container: {fileID: 912238783}
+--- !u!95 &450851132
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 450851129}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 584253a19e85aaa469064182bd8228e2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &493823944
 GameObject:
   m_ObjectHideFlags: 0
@@ -809,7 +832,7 @@ Animator:
   m_GameObject: {fileID: 557796545}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 37ee47985aa254e4d9285a45413a8e70, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2104,7 +2127,7 @@ Animator:
   m_GameObject: {fileID: 1512472542}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2fa9e74b4d366924bab383bfb026f013, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
