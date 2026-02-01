@@ -5,6 +5,10 @@ using UnityEngine.AI;
 
 public class SpectatorController : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private Sprite _spriteNeutral;
+    [SerializeField] private Sprite _spriteHappy;
+    [SerializeField] private Sprite _spriteSad;
     private bool _hasToLeaveScene = false;
     private Transform _frontStagePoint;
     private Vector3 _closestPoint;
@@ -19,6 +23,11 @@ public class SpectatorController : MonoBehaviour
 
     void Start()
     {
+        NoteChecker.Instance.OnPerfect += ChangeSpriteHappy;
+        NoteChecker.Instance.OnGood += ResetSprite;
+        NoteChecker.Instance.OnMiss += ChangeSpriteSad;
+
+
         Vector3 randomOffset = Random.insideUnitSphere * 1.5f;
         randomOffset.y = 0;
         _closestPoint = _frontStagePoint.position + randomOffset;
@@ -45,6 +54,13 @@ public class SpectatorController : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        NoteChecker.Instance.OnPerfect -= ChangeSpriteHappy;
+        NoteChecker.Instance.OnGood -= ResetSprite;
+        NoteChecker.Instance.OnMiss -= ChangeSpriteSad;
+    }
+
     private void LeaveScene()
     {
         _rb.MovePosition(Vector3.MoveTowards(transform.position, _leavePoint, Time.fixedDeltaTime * 2f));
@@ -62,5 +78,20 @@ public class SpectatorController : MonoBehaviour
         {
             _rb.MovePosition(Vector3.MoveTowards(transform.position, _closestPoint, Time.fixedDeltaTime * 2f));
         }
+    }
+
+    private void ChangeSpriteHappy()
+    {
+        _spriteRenderer.sprite = _spriteHappy;
+    }
+
+    private void ChangeSpriteSad()
+    {
+        _spriteRenderer.sprite = _spriteSad;
+    }
+
+    private void ResetSprite()
+    {
+        _spriteRenderer.sprite = _spriteNeutral;
     }
 }
