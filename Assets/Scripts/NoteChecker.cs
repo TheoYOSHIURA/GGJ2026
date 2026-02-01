@@ -1,6 +1,8 @@
 using System;
 using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum EHitQuality
 {
@@ -12,19 +14,65 @@ public enum EHitQuality
 public class NoteChecker : MonoBehaviour
 {
     [Header("Key Bindings")]
-    [SerializeField] private KeyCode[] _keys = { KeyCode.D, KeyCode.F, KeyCode.J, KeyCode.K };
+    [SerializeField] private KeyCode[] _keys = { KeyCode.D, KeyCode.F, KeyCode.J, KeyCode.K, KeyCode.Joystick1Button0, KeyCode.Joystick1Button1, KeyCode.Joystick1Button2, KeyCode.Joystick1Button3, KeyCode.Joystick1Button4 };
 
     [SerializeField] private NoteSpawner _noteSpawner;
 
     private static NoteChecker _instance;
     public static NoteChecker Instance => _instance;
 
-    private event Action _onNoteHit;
-    public event Action OnNoteHit
+    public float HitWindowGood { get => hitWindowGood; set => hitWindowGood = value; }
+
+    #region Events
+    private event Action _onPerfect;
+    public event Action OnPerfect
     {
-        add { _onNoteHit -= value; _onNoteHit += value; }
-        remove { _onNoteHit -= value; }
+        add { _onPerfect -= value; _onPerfect += value; }
+        remove { _onPerfect -= value; }
     }
+
+    private event Action _onGood;
+    public event Action OnGood
+    {
+        add { _onGood -= value; _onGood += value; }
+        remove { _onGood -= value; }
+    }
+
+    private event Action _onMiss;
+    public event Action OnMiss
+    {
+        add { _onMiss -= value; _onMiss += value; }
+        remove { _onMiss -= value; }
+    }
+
+    private event Action _onJoie;
+    public event Action OnJoie
+    {
+        add { _onJoie -= value; _onJoie += value; }
+        remove { _onJoie -= value; }
+    }
+
+    private event Action _onTristesse;
+    public event Action OnTristesse
+    {
+        add { _onTristesse -= value; _onTristesse += value; }
+        remove { _onTristesse -= value; }
+    }
+
+    private event Action _onColere;
+    public event Action OnColere
+    {
+        add { _onColere -= value; _onColere += value; }
+        remove { _onColere -= value; }
+    }
+
+    private event Action _onSurprise;
+    public event Action OnSurprise
+    {
+        add { _onSurprise -= value; _onSurprise += value; }
+        remove { _onSurprise -= value; }
+    }
+    #endregion Events
 
     [Header("Hit Settings")]
     [SerializeField] private float hitWindowPerfect = 0.05f; // 50 ms
@@ -38,34 +86,33 @@ public class NoteChecker : MonoBehaviour
 
     void Update()
     {
-        for (int i = 0; i < _keys.Length; i++)
+        if (Input.GetKeyDown(_keys[0]) || Input.GetKeyDown(_keys[4]))
         {
-            if (Input.GetKeyDown(_keys[i]))
-            {
-                _onNoteHit?.Invoke();
-                switch (_keys[i])
-                {
-                    case KeyCode.D:
-                        HitNote("joie");
-                        break;
-                    case KeyCode.F:
-                        HitNote("tristesse");
-                        break;
-                    case KeyCode.J:
-                        HitNote("colere");
-                        break;
-                    case KeyCode.K:
-                        HitNote("surprise");
-                        break;
-                }
-            }
+            HitNote("joie");
+        }
+        if (Input.GetKeyDown(_keys[1]) || Input.GetKeyDown(_keys[5]))
+        {
+            HitNote("tristesse");
+        }
+        if (Input.GetKeyDown(_keys[2]) || Input.GetKeyDown(_keys[6]))
+        {
+            HitNote("colere");
+        }
+        if (Input.GetKeyDown(_keys[3]) || Input.GetKeyDown(_keys[7]))
+        {
+            HitNote("surprise");
         }
     }
 
-    private EHitQuality HitNote(string tag)
+    private void HitNote(string tag)
     {
         // Find the closest note to hit
-        if (_noteSpawner.Notes == null) return EHitQuality.Miss;
+        if (_noteSpawner.Notes == null)
+        {
+            DestroyNote(null, EHitQuality.Miss, tag);
+            return;
+        }
+
         NoteController closestNote = null;
         double smallestOffset = double.MaxValue;
 
@@ -82,36 +129,78 @@ public class NoteChecker : MonoBehaviour
         }
         if (closestNote == null)
         {
-            return EHitQuality.Miss;
+            DestroyNote(null, EHitQuality.Miss, tag);
+            return;
         }
 
-        /* Check if the note has the correct tag
+        //* Check if the note has the correct tag
         if (closestNote.CompareTag(tag) == false)
         {
-            Destroy(closestNote.gameObject);
-            return EHitQuality.Miss;
+            DestroyNote(closestNote, EHitQuality.Miss, tag);
+            return;
         } //*/
 
         // Calculate the offset between the note's hit time and the current song time
         double TimingOffset = Mathf.Abs((float)(closestNote.HitTime - AudioManager.Instance.SongTime));
         Debug.Log($"Hit Time :  {closestNote.HitTime:F3} | Song Time: {AudioManager.Instance.SongTime:F3} | Hit offset: {TimingOffset:F3}");
 
-        if (TimingOffset <= hitWindowPerfect)
+        if (TimingOffset <= hitWindowPerfect - AudioManager.Instance.VisualInputDelay)
         {
-            Debug.Log("Perfect!");
-            Destroy(closestNote.gameObject);
-            return EHitQuality.Perfect;
+            DestroyNote(closestNote, EHitQuality.Perfect, tag);
+            return;
         }
-        else if (TimingOffset <= hitWindowGood)
+        else if (TimingOffset <= HitWindowGood - AudioManager.Instance.VisualInputDelay)
         {
-            Debug.Log("Good");
-            Destroy(closestNote.gameObject);
-            return EHitQuality.Good;
+            DestroyNote(closestNote, EHitQuality.Good, tag);
+            return;
         }
         else
         {
-            Destroy(closestNote.gameObject);
-            return EHitQuality.Miss;
+            DestroyNote(closestNote, EHitQuality.Miss, tag);
+            return;
         }
+    }
+
+    private void DestroyNote(NoteController note = null, EHitQuality quality = EHitQuality.Miss, string tag = "")
+    {
+
+        switch (quality)
+        {
+            case EHitQuality.Perfect:
+                ScoreManager.Instance.Score += 300;
+                _onPerfect?.Invoke();
+                break;
+            case EHitQuality.Good:
+                ScoreManager.Instance.Score += 100;
+                _onGood?.Invoke();
+                break;
+            case EHitQuality.Miss:
+                ScoreManager.Instance.Score -= 50;
+                _onMiss?.Invoke();
+                break;
+        }
+
+        if (quality != EHitQuality.Miss)
+        {
+            switch (tag)
+            {
+                case "joie":
+                    _onJoie?.Invoke();
+                    break;
+                case "tristesse":
+                    _onTristesse?.Invoke();
+                    break;
+                case "colere":
+                    _onColere?.Invoke();
+                    break;
+                case "surprise":
+                    _onSurprise?.Invoke();
+                    break;
+            }
+        }
+        if (note == null) return;
+
+        NoteSpawner.Instance.Notes.Remove(note);
+        Destroy(note.gameObject);
     }
 }
