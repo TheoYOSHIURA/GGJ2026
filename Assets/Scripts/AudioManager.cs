@@ -62,6 +62,7 @@ public class AudioManager : MonoBehaviour
         else
         {
             Debug.Log("Audio finished playing.");
+             // StartAudio(); C'est ici adrien pour passer à la suivante;
         }
     }
 
