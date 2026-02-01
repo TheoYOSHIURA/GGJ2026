@@ -7,7 +7,11 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Settings")]
-    [SerializeField] private float _bpm = 65;
+    [SerializeField] private float[] _bpm = { 50, 65, 85 };
+    
+    private int _value = 1;
+    private int _bpmvalue = 0;
+    [SerializeField] private AudioClip[] _musicClips;
     [SerializeField] private float _visualInputDelay = 0f;
 
     private AudioSource _audioSource;
@@ -44,7 +48,10 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         _audioSource = GetComponent<AudioSource>();
-        StartAudio();
+        StartAudio(_musicClips[_value], _bpm[_bpmvalue]);
+        _bpmvalue += 1;
+        _value += 1;
+        
     }
 
     void Update()
@@ -62,18 +69,20 @@ public class AudioManager : MonoBehaviour
         else
         {
             Debug.Log("Audio finished playing.");
-             // StartAudio(); C'est ici adrien pour passer à la suivante;
+            StartAudio(_musicClips[_value], _bpm[_bpmvalue]);
+            _bpmvalue += 1;
+            _value += 1;
         }
     }
 
     private void StartAudio(AudioClip clip = null, float bpm = 65)
     {
-        _bpm = bpm;
+        _bpm[_bpmvalue] = bpm;
         if (clip != null)
         {
             _audioSource.clip = clip;
         }
-        _secondsPerBeat = 60.0 / _bpm;
+        _secondsPerBeat = 60.0 / _bpm[_bpmvalue];
         _startDelay = leadInBeats * _secondsPerBeat;
         _songStartDspTime = AudioSettings.dspTime + _startDelay; // slight delay to ensure scheduling works correctly
         _audioSource.PlayScheduled(_songStartDspTime);
