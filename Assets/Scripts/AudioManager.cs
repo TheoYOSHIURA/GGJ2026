@@ -46,9 +46,7 @@ public class AudioManager : MonoBehaviour
         _startDelay = leadInBeats * _secondsPerBeat;
         _songStartDspTime = AudioSettings.dspTime + _startDelay; // slight delay to ensure scheduling works correctly
         _audioSource.PlayScheduled(_songStartDspTime);
-        
-        
-    }
+ }
 
     void Update()
     {
