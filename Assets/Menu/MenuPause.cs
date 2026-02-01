@@ -12,9 +12,9 @@ public class MenuPause : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             playableDirector.Play();
+
             container.SetActive(true);
             Time.timeScale = 0;
-            
         }
     }
     
