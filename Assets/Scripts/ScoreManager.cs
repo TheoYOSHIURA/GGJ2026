@@ -15,12 +15,12 @@ public class ScoreManager : MonoBehaviour
             if (value - Score > 0)
             {
                 _onScoreIncrease.Invoke();
-                Debug.Log("Score Increase invoked");
+                //Debug.Log("Score Increase invoked");
             }
             else if (value - Score < 0) 
             {
                 _onScoreDecrease.Invoke();
-                Debug.Log("Score Decrease invoked");
+                //Debug.Log("Score Decrease invoked");
             }
             _score = value;
         }
