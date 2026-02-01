@@ -46,15 +46,19 @@ public class NoteChecker : MonoBehaviour
                 switch (_keys[i])
                 {
                     case KeyCode.D:
+                        SoundsManager.Instance.PlaySound("clic");
                         HitNote("joie");
                         break;
                     case KeyCode.F:
+                        SoundsManager.Instance.PlaySound("clic");
                         HitNote("tristesse");
                         break;
                     case KeyCode.J:
+                        SoundsManager.Instance.PlaySound("clic");
                         HitNote("colere");
                         break;
                     case KeyCode.K:
+                        SoundsManager.Instance.PlaySound("clic");
                         HitNote("surprise");
                         break;
                 }
@@ -82,14 +86,17 @@ public class NoteChecker : MonoBehaviour
         }
         if (closestNote == null)
         {
-            return EHitQuality.Miss;
+            SoundsManager.Instance.PlaySound("wrong");
+            return EHitQuality.Miss;           
         }
 
         /* Check if the note has the correct tag
         if (closestNote.CompareTag(tag) == false)
         {
             Destroy(closestNote.gameObject);
+            SoundsManager.Instance.PlaySound("wrong");
             return EHitQuality.Miss;
+            
         } //*/
 
         // Calculate the offset between the note's hit time and the current song time
@@ -100,6 +107,7 @@ public class NoteChecker : MonoBehaviour
         {
             Debug.Log("Perfect!");
             Destroy(closestNote.gameObject);
+            //SoundsManager.Instance.PlaySound("yey");
             return EHitQuality.Perfect;
         }
         else if (TimingOffset <= hitWindowGood)
@@ -111,6 +119,7 @@ public class NoteChecker : MonoBehaviour
         else
         {
             Destroy(closestNote.gameObject);
+            SoundsManager.Instance.PlaySound("wrong");
             return EHitQuality.Miss;
         }
     }

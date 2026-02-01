@@ -3,6 +3,7 @@ using System;
 
 public class AudioManager : MonoBehaviour
 {
+    
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Settings")]
@@ -39,11 +40,13 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         _audioSource = GetComponent<AudioSource>();
+        _bpm = 50;
         _secondsPerBeat = 60.0 / _bpm;
+        _audioSource.clip = SoundsManager.Instance.SoundDict["Cadenza 100"];
         _startDelay = leadInBeats * _secondsPerBeat;
         _songStartDspTime = AudioSettings.dspTime + _startDelay; // slight delay to ensure scheduling works correctly
         _audioSource.PlayScheduled(_songStartDspTime);
-    }
+ }
 
     void Update()
     {
